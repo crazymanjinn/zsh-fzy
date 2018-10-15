@@ -1,4 +1,3 @@
-#! /bin/zsh
 #
 # zsh-fzy.plugin.zsh
 # Copyright (C) 2018 Adrian Perez <aperez@igalia.com>
@@ -44,14 +43,10 @@ function __fzy_cmd
 
 function __fzy_fsel
 {
-	command find -L . \( -path '*/\.*' -o -fstype dev -o -fstype proc \) -prune \
-			-o -type f -print \
-			-o -type d -print \
-			-o -type l -print 2> /dev/null | sed 1d | cut -b3- | \
-		__fzy_cmd file | while read -r item ; do
-		echo -n "${(q)item}"
+	command fd -L . | __fzy_cmd file | while read -r item; do
+	    print -n "${(q)item}"
 	done
-	echo
+	print
 }
 
 function fzy-file-widget
@@ -64,8 +59,7 @@ function fzy-file-widget
 function fzy-cd-widget
 {
 	emulate -L zsh
-	cd "${$(command find -L . \( -path '*/\.*' -o -fstype dev -o -fstype proc \) -prune \
-		-o -type d -print 2> /dev/null | sed 1d | cut -b3- | __fzy_cmd cd):-.}"
+	cd "${$(command fd -L -t d | __fzy_cmd cd):-.}"
 	zle reset-prompt
 }
 
